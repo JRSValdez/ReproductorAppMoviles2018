@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/reproducir" android:title="Reproducir"></item>
+    <item android:id="@+id/pausar" android:title="Pausar"></item>
+    <item android:id="@+id/detener" android:title="Detener"></item>
+</menu>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PrincipalScreen">
+    <TextView
+        android:gravity="start"
+        android:id="@+id/Txt1"
+        android:padding="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="REPRODUCTOR"/>
+    <ListView
+        android:id="@+id/list"
+        android:layout_weight="1.0"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/tvTime"
+        android:text="00:00 - 00:00"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp" />
+    <LinearLayout
+        android:background="#d7fcff"
+        android:padding="8dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <SeekBar
+            android:id="@+id/skSong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/anterior"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="Anterior"
+                android:padding="15dp"
+                android:background="@drawable/anterior" />
+
+            <ImageButton
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:id="@+id/play_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="PlayStop"
+                android:padding="25dp"
+                android:background="@drawable/play" />
+
+            <ImageButton
+                android:id="@+id/siguiente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="Siguiente"
+                android:padding="15dp"
+                android:background="@drawable/siguiente" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
