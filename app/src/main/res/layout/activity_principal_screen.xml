@@ -19,19 +19,27 @@
         android:layout_weight="1.0"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
+
     <TextView
         android:id="@+id/tvTime"
         android:text="00:00 - 00:00"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp" />
+
+    <TextView
+        android:gravity="center_horizontal"
+        android:text="@string/reproduciendo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
-        android:background="#d7fcff"
-        android:padding="8dp"
+        android:background="@drawable/buttons_background"
+        android:padding="7dp"
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="100dp">
 
         <SeekBar
             android:id="@+id/skSong"
@@ -49,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="Anterior"
                 android:padding="15dp"
-                android:background="@drawable/anterior" />
+                android:background="@drawable/before64x64" />
 
             <ImageButton
                 android:layout_marginLeft="10dp"
@@ -59,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="PlayStop"
                 android:padding="25dp"
-                android:background="@drawable/play" />
+                android:background="@drawable/play_64x64" />
 
             <ImageButton
                 android:id="@+id/siguiente"
@@ -67,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="Siguiente"
                 android:padding="15dp"
-                android:background="@drawable/siguiente" />
+                android:background="@drawable/next_64x64" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Reproductor de Audio</string>
+    <string name="app_name">Reproductor VLSP</string>
+    <string name="reproduciendo">Canción Reproduciendo</string>
+    <string name="titulo">Canciones: </string>
 </resources>

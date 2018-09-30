@@ -4,7 +4,7 @@
     <item
         android:title="Agregar"
         android:id="@+id/agregar"
-        android:icon="@drawable/agregar"
+        android:icon="@drawable/agg_canciones"
         android:orderInCategory="2"
         app:showAsAction="always|collapseActionView" />
     <item

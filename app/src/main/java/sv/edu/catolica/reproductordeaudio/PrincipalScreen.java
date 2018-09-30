@@ -96,7 +96,7 @@ public class PrincipalScreen extends AppCompatActivity {
                 //cada segundo se actualiza el estado del seek bar
                 skHandler.postDelayed(updateskSong, 1000);
 
-                Play_pause.setBackgroundResource(R.drawable.pausa);
+                Play_pause.setBackgroundResource(R.drawable.pause64x64);
                 Toast.makeText(PrincipalScreen.this,"Reproduciendo: " +arrayList.get(i), Toast.LENGTH_SHORT).show();
             }
 
@@ -153,7 +153,7 @@ public class PrincipalScreen extends AppCompatActivity {
     public void PlayStop(View v){
         if (mp.isPlaying()){
             mp.pause();
-            Play_pause.setBackgroundResource(R.drawable.play);
+            Play_pause.setBackgroundResource(R.drawable.play_64x64);
             Toast.makeText(PrincipalScreen.this,"Pausa", Toast.LENGTH_SHORT).show();
         }else{
             try{
@@ -168,7 +168,7 @@ public class PrincipalScreen extends AppCompatActivity {
 
 
 
-                Play_pause.setBackgroundResource(R.drawable.pausa);
+                Play_pause.setBackgroundResource(R.drawable.pause64x64);
                 Toast.makeText(PrincipalScreen.this,"Reproduciendo", Toast.LENGTH_SHORT).show();
             }catch (IllegalStateException e){
                 e.printStackTrace();
@@ -284,20 +284,20 @@ public class PrincipalScreen extends AppCompatActivity {
                 //cada segundo se actualiza el estado del seek bar
                 skHandler.postDelayed(updateskSong, 1000);
 
-                Play_pause.setBackgroundResource(R.drawable.pausa);
+                Play_pause.setBackgroundResource(R.drawable.pause64x64);
                 Toast.makeText(PrincipalScreen.this,"Reproduciendo: " +arrayList.get(i.position), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.pausar:
                 if (mp.isPlaying()){
                     mp.pause();
-                    Play_pause.setBackgroundResource(R.drawable.play);
+                    Play_pause.setBackgroundResource(R.drawable.play_64x64);
                     Toast.makeText(PrincipalScreen.this,"Pausa", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             case R.id.detener:
                 if (mp.isPlaying()){
                     mp.stop();
-                    Play_pause.setBackgroundResource(R.drawable.play);
+                    Play_pause.setBackgroundResource(R.drawable.play_64x64);
                     Toast.makeText(PrincipalScreen.this,"Detener", Toast.LENGTH_SHORT).show();
 
                     int iD = getResources().getIdentifier(arrayList.get(i.position), "raw", getPackageName());
