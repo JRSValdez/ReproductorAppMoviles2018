@@ -58,6 +58,9 @@ public class PrincipalScreen extends AppCompatActivity {
     int posicion = 0, count = 1;
     MediaPlayer mpLista[] = new MediaPlayer[2];
 
+    Uri[] cancionesExternas = new Uri[10];
+    int conExt = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,10 +102,16 @@ public class PrincipalScreen extends AppCompatActivity {
                 Field[] songs = R.raw.class.getFields();
                 txt1.setText(count + "/" + songs.length);
 
-                int id = getResources().getIdentifier(arrayList.get(i), "raw", getPackageName());
+                if(posicion <= 2){
+                    int id = getResources().getIdentifier(arrayList.get(i), "raw", getPackageName());
 
-                mp = MediaPlayer.create(PrincipalScreen.this, id);
-                mp.start();
+                    mp = MediaPlayer.create(PrincipalScreen.this, id);
+                    mp.start();
+                } else{
+                    mp = new MediaPlayer();
+                    mp = MediaPlayer.create(PrincipalScreen.this,cancionesExternas[posicion-3]);
+                    mp.start();
+                }
 
                 tvTime.setText(getHRM(mp.getDuration()));
                 skSong.setMax(mp.getDuration());
@@ -146,20 +155,44 @@ public class PrincipalScreen extends AppCompatActivity {
     }
 
     public void Anterior(View v) {
-        if (posicion >= 1) {
-            if (mp.isPlaying()) {
-                mp.stop();
-                posicion--;
-                int id = getResources().getIdentifier(arrayList.get(posicion), "raw", getPackageName());
-                mp = MediaPlayer.create(PrincipalScreen.this, id);
-                mp.start();
+        if (posicion >= 1 ) {
+            if(posicion>2){
+                if (mp.isPlaying()) {
+                    mp.stop();
+                    posicion--;
+                    mp = new MediaPlayer();
+                    if(posicion<=2){
+                        int id = getResources().getIdentifier(arrayList.get(posicion), "raw", getPackageName());
+                        mp = MediaPlayer.create(PrincipalScreen.this, id);
+                        mp.start();
+                    } else{
+                        mp = MediaPlayer.create(PrincipalScreen.this, cancionesExternas[posicion-3]);
+                        mp.start();
+                    }
 
-                count = posicion + 1;
-                Field[] songs = R.raw.class.getFields();
-                txt1.setText(count + "/" + songs.length);
-            } else {
-                posicion--;
-                count = posicion + 1;
+
+                    count = posicion + 1;
+                    Field[] songs = R.raw.class.getFields();
+                    txt1.setText(count + "/" + songs.length);
+                } else {
+                    posicion--;
+                    count = posicion + 1;
+                }
+            }else {
+                if (mp.isPlaying()) {
+                    mp.stop();
+                    posicion--;
+                    int id = getResources().getIdentifier(arrayList.get(posicion), "raw", getPackageName());
+                    mp = MediaPlayer.create(PrincipalScreen.this, id);
+                    mp.start();
+
+                    count = posicion + 1;
+                    Field[] songs = R.raw.class.getFields();
+                    txt1.setText(count + "/" + songs.length);
+                } else {
+                    posicion--;
+                    count = posicion + 1;
+                }
             }
         } else {
             Toast.makeText(PrincipalScreen.this, "No hay más canciones", Toast.LENGTH_SHORT).show();
@@ -193,19 +226,24 @@ public class PrincipalScreen extends AppCompatActivity {
 
     public void Siguiente(View v) {
         Field[] songs = R.raw.class.getFields();
-        if (posicion < songs.length - 1) {
+        if (posicion < conExt + 2) {
             if (mp.isPlaying()) {
                 mp.stop();
                 posicion++;
-                int id = getResources().getIdentifier(arrayList.get(posicion), "raw", getPackageName());
-                mp = MediaPlayer.create(PrincipalScreen.this, id);
-                mp.start();
-
+                if(posicion>2){
+                    mp.stop();
+                    mp = MediaPlayer.create(PrincipalScreen.this, cancionesExternas[posicion-3]);
+                    mp.start();
+                } else {
+                    int id = getResources().getIdentifier(arrayList.get(posicion), "raw", getPackageName());
+                    mp = MediaPlayer.create(PrincipalScreen.this, id);
+                    mp.start();
+                }
                 count = posicion + 1;
                 txt1.setText(count + "/" + songs.length);
             } else {
-                posicion++;
-                count = posicion + 1;
+                //posicion++;
+                //count = posicion + 1;
             }
         } else {
             Toast.makeText(PrincipalScreen.this, "No hay más canciones", Toast.LENGTH_SHORT).show();
@@ -376,14 +414,15 @@ public class PrincipalScreen extends AppCompatActivity {
 
             try {
 
-       MediaPlayer mp2=new MediaPlayer();
-mp2.setDataSource(rutaEsp);
-                mp2.prepare();
-                mp2.start();
+                   mp= MediaPlayer.create(PrincipalScreen.this, uri);
+                   this.cancionesExternas[conExt] = uri;
+                   conExt++;
+                   mp.prepare();
+                   //mp.start();
 
                 Toast.makeText(PrincipalScreen.this,nombreCancion,LENGTH_LONG).show();
             }catch (Exception e){
-                Toast.makeText(PrincipalScreen.this,rutaEsp,LENGTH_LONG).show();
+               // Toast.makeText(PrincipalScreen.this,"error trycatch",LENGTH_LONG).show();
 
             }
 
