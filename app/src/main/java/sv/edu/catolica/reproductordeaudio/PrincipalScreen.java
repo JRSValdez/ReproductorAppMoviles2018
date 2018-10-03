@@ -121,7 +121,7 @@ public class PrincipalScreen extends AppCompatActivity {
                 skHandler.postDelayed(updateskSong, 1000);
 
                 Play_pause.setBackgroundResource(R.drawable.pause64x64);
-                Toast.makeText(PrincipalScreen.this, "Reproduciendo: " + arrayList.get(i), Toast.LENGTH_SHORT).show();
+                Toast.makeText(PrincipalScreen.this, " " + arrayList.get(i), Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -337,10 +337,15 @@ public class PrincipalScreen extends AppCompatActivity {
                 }
                 posicion = i.position;
 
-                int id = getResources().getIdentifier(arrayList.get(i.position), "raw", getPackageName());
+if(posicion>=0 && posicion<=2){
+              int  id = getResources().getIdentifier(arrayList.get(i.position), "raw", getPackageName());
+    mp = MediaPlayer.create(PrincipalScreen.this, id);
+    mp.start();
+}else{
+    mp = MediaPlayer.create(PrincipalScreen.this, cancionesExternas[posicion-3]);
+    mp.start();
+}
 
-                mp = MediaPlayer.create(PrincipalScreen.this, id);
-                mp.start();
 
                 tvTime.setText(getHRM(mp.getDuration()));
                 skSong.setMax(mp.getDuration());
@@ -357,16 +362,26 @@ public class PrincipalScreen extends AppCompatActivity {
                     mp.pause();
                     Play_pause.setBackgroundResource(R.drawable.play_64x64);
                     Toast.makeText(PrincipalScreen.this, "Pausa", Toast.LENGTH_SHORT).show();
+                }else {
+                    if(mp.isPlaying()==false) {
+                        mp.start();
+                        Play_pause.setBackgroundResource(R.drawable.pause64x64);
+                        Toast.makeText(PrincipalScreen.this, "Reanudar", Toast.LENGTH_SHORT).show();
+                }
                 }
                 return true;
             case R.id.detener:
+
                 if (mp.isPlaying()) {
                     mp.stop();
                     Play_pause.setBackgroundResource(R.drawable.play_64x64);
                     Toast.makeText(PrincipalScreen.this, "Detener", Toast.LENGTH_SHORT).show();
-
+                    if(i.position>=0 && i.position<=2){
                     int iD = getResources().getIdentifier(arrayList.get(i.position), "raw", getPackageName());
                     mp = MediaPlayer.create(PrincipalScreen.this, iD);
+                }else{
+                        mp = MediaPlayer.create(PrincipalScreen.this, cancionesExternas[posicion-3]);
+                    }
                 }
                 return true;
             default:
@@ -414,10 +429,10 @@ public class PrincipalScreen extends AppCompatActivity {
 
             try {
 
-                   mp= MediaPlayer.create(PrincipalScreen.this, uri);
+               //    mp= MediaPlayer.create(PrincipalScreen.this, uri);
                    this.cancionesExternas[conExt] = uri;
                    conExt++;
-                   mp.prepare();
+                  // mp.prepare();
                    //mp.start();
 
                 Toast.makeText(PrincipalScreen.this,nombreCancion,LENGTH_LONG).show();

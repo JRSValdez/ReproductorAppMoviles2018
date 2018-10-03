@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:title="Agregar"
+        android:title="@string/Agregar"
         android:id="@+id/agregar"
         android:icon="@drawable/agg_canciones"
         android:orderInCategory="2"
         app:showAsAction="always|collapseActionView" />
     <item
-        android:title="Salir"
+        android:title="@string/Salir"
         android:icon="@drawable/apagar"
         android:id="@+id/salir"
         android:orderInCategory="4"
