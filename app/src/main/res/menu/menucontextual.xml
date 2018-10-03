@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/reproducir" android:title="@string/Reproducir"></item>
-    <item android:id="@+id/pausar" android:title="@string/P_R"></item>
-    <item android:id="@+id/detener" android:title="@string/detener"></item>
+    <item android:id="@+id/reproducir" android:title="@string/Reproducir" android:icon="@drawable/play_48x48"></item>
+    <item android:id="@+id/pausar" android:title="@string/P_R" android:icon="@drawable/pause48x48"></item>
+    <item android:id="@+id/detener" android:title="@string/detener" android:icon="@drawable/pause48x48"></item>
 </menu>
