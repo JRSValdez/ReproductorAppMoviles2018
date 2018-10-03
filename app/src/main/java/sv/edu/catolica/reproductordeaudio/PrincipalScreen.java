@@ -1,9 +1,11 @@
 package sv.edu.catolica.reproductordeaudio;
 
+import android.Manifest;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -13,6 +15,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -49,7 +53,7 @@ public class PrincipalScreen extends AppCompatActivity {
     private ListView list;
     private ImageButton Play_pause, Prev, Next;
     private SeekBar skSong;
-    private TextView tvTime, txt1;
+    private TextView tvTime, txt1, txtActual;
     private Handler skHandler = new Handler();
     private int VALOR_RETORNO = 1;
     MediaPlayer mp;
@@ -58,8 +62,13 @@ public class PrincipalScreen extends AppCompatActivity {
     int posicion = 0, count = 1;
     MediaPlayer mpLista[] = new MediaPlayer[2];
 
-    Uri[] cancionesExternas = new Uri[10];
+    Field[] songs;
+    Uri[] cancionesExternas = new Uri[100];
+    String[] nombreCanciones = new String[100];
     int conExt = 0;
+    int itemActual = 0;
+    private static final int REQUEST_CODE_READ_EXTERNAL_PERMISSION = 2;
+    AdapterView<?> miAdapterView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +81,11 @@ public class PrincipalScreen extends AppCompatActivity {
         skSong = (SeekBar) findViewById(R.id.skSong);
         tvTime = (TextView) findViewById(R.id.tvTime);
         txt1 = (TextView) findViewById(R.id.Txt1);
+        txtActual = findViewById(R.id.txtActual);
         list = findViewById(R.id.list);
 
         arrayList = new ArrayList<String>();
-        Field[] songs = R.raw.class.getFields();
+        songs = R.raw.class.getFields();
         for (int i = 0; i < songs.length; i++) {
             arrayList.add(songs[i].getName());
         }
@@ -85,7 +95,6 @@ public class PrincipalScreen extends AppCompatActivity {
         txt1.setText(count + "/" + songs.length);
 
         registerForContextMenu(list);
-
         int id = getResources().getIdentifier(arrayList.get(posicion), "raw", getPackageName());
 
         mp = MediaPlayer.create(PrincipalScreen.this, id);
@@ -93,6 +102,7 @@ public class PrincipalScreen extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                miAdapterView = adapterView;
                 if (mp != null) {
                     mp.release();
                 }
@@ -100,16 +110,17 @@ public class PrincipalScreen extends AppCompatActivity {
 
                 count = i + 1;
                 Field[] songs = R.raw.class.getFields();
-                txt1.setText(count + "/" + songs.length);
+                actualizarTotal();
 
                 if(posicion <= 2){
                     int id = getResources().getIdentifier(arrayList.get(i), "raw", getPackageName());
-
+                    txtActual.setText(songs[posicion].getName());
                     mp = MediaPlayer.create(PrincipalScreen.this, id);
                     mp.start();
                 } else{
                     mp = new MediaPlayer();
                     mp = MediaPlayer.create(PrincipalScreen.this,cancionesExternas[posicion-3]);
+                    txtActual.setText(nombreCanciones[posicion-3].toString());
                     mp.start();
                 }
 
@@ -122,6 +133,15 @@ public class PrincipalScreen extends AppCompatActivity {
 
                 Play_pause.setBackgroundResource(R.drawable.pause64x64);
                 Toast.makeText(PrincipalScreen.this, " " + arrayList.get(i), Toast.LENGTH_SHORT).show();
+
+                //cambiando color del item seleccionado
+                miAdapterView.getChildAt(itemActual).setBackgroundColor(Color.WHITE);
+
+                if (posicion != -1 && posicion != itemActual){
+                    miAdapterView.getChildAt(posicion).setBackgroundColor(Color.LTGRAY);
+                }
+
+                itemActual = posicion;
             }
 
         });
@@ -164,16 +184,17 @@ public class PrincipalScreen extends AppCompatActivity {
                     if(posicion<=2){
                         int id = getResources().getIdentifier(arrayList.get(posicion), "raw", getPackageName());
                         mp = MediaPlayer.create(PrincipalScreen.this, id);
+                        txtActual.setText(songs[posicion].getName());
                         mp.start();
                     } else{
                         mp = MediaPlayer.create(PrincipalScreen.this, cancionesExternas[posicion-3]);
+                        txtActual.setText(nombreCanciones[posicion-3].toString());
                         mp.start();
                     }
 
 
                     count = posicion + 1;
-                    Field[] songs = R.raw.class.getFields();
-                    txt1.setText(count + "/" + songs.length);
+                    actualizarTotal();
                 } else {
                     posicion--;
                     count = posicion + 1;
@@ -184,15 +205,27 @@ public class PrincipalScreen extends AppCompatActivity {
                     posicion--;
                     int id = getResources().getIdentifier(arrayList.get(posicion), "raw", getPackageName());
                     mp = MediaPlayer.create(PrincipalScreen.this, id);
+                    txtActual.setText(songs[posicion].getName());
                     mp.start();
 
                     count = posicion + 1;
-                    Field[] songs = R.raw.class.getFields();
-                    txt1.setText(count + "/" + songs.length);
+                    actualizarTotal();
                 } else {
                     posicion--;
                     count = posicion + 1;
                 }
+            }
+            try {
+                //cambiando color del item seleccionado
+                miAdapterView.getChildAt(itemActual).setBackgroundColor(Color.WHITE);
+
+                if (posicion != -1 && posicion != itemActual){
+                    miAdapterView.getChildAt(posicion).setBackgroundColor(Color.LTGRAY);
+                }
+
+                itemActual = posicion;
+            } catch (Exception e){
+
             }
         } else {
             Toast.makeText(PrincipalScreen.this, "No hay más canciones", Toast.LENGTH_SHORT).show();
@@ -215,9 +248,9 @@ public class PrincipalScreen extends AppCompatActivity {
                 //cada segundo se actualiza el estado del seek bar
                 skHandler.postDelayed(updateskSong, 1000);
 
-
                 Play_pause.setBackgroundResource(R.drawable.pause64x64);
                 Toast.makeText(PrincipalScreen.this, "Reproduciendo", Toast.LENGTH_SHORT).show();
+
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
@@ -233,14 +266,30 @@ public class PrincipalScreen extends AppCompatActivity {
                 if(posicion>2){
                     mp.stop();
                     mp = MediaPlayer.create(PrincipalScreen.this, cancionesExternas[posicion-3]);
+                    txtActual.setText(nombreCanciones[posicion-3].toString());
                     mp.start();
                 } else {
                     int id = getResources().getIdentifier(arrayList.get(posicion), "raw", getPackageName());
                     mp = MediaPlayer.create(PrincipalScreen.this, id);
+                    txtActual.setText(songs[posicion].getName());
                     mp.start();
                 }
                 count = posicion + 1;
-                txt1.setText(count + "/" + songs.length);
+
+                try {
+                    //cambiando color del item seleccionado
+                    miAdapterView.getChildAt(itemActual).setBackgroundColor(Color.WHITE);
+
+                    if (posicion != -1 && posicion != itemActual){
+                        miAdapterView.getChildAt(posicion).setBackgroundColor(Color.LTGRAY);
+                    }
+
+                    itemActual = posicion;
+                } catch (Exception e){
+
+                }
+
+                actualizarTotal();
             } else {
                 //posicion++;
                 //count = posicion + 1;
@@ -284,19 +333,22 @@ public class PrincipalScreen extends AppCompatActivity {
         }
     }
 
-
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.agregar:
-
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath());
-                intent.setDataAndType(uri, "audio/*");
-                startActivityForResult(Intent.createChooser(intent, "Open folder"),VALOR_RETORNO);
-
+                int readExternalStoragePermission = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+                if(readExternalStoragePermission != PackageManager.PERMISSION_GRANTED)
+                {
+                    String requirePermission[] = {Manifest.permission.READ_EXTERNAL_STORAGE};
+                    ActivityCompat.requestPermissions(PrincipalScreen.this, requirePermission, REQUEST_CODE_READ_EXTERNAL_PERMISSION);
+                }else {
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath());
+                    intent.setDataAndType(uri, "audio/*");
+                    startActivityForResult(Intent.createChooser(intent, "Elege una cación"),VALOR_RETORNO);
+                }
+                count++;
                 return true;
             case R.id.salir:
                 AlertDialog.Builder b = new AlertDialog.Builder(this);
@@ -323,10 +375,6 @@ public class PrincipalScreen extends AppCompatActivity {
         }
     }
 
-
-
-
-
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo i = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -337,15 +385,31 @@ public class PrincipalScreen extends AppCompatActivity {
                 }
                 posicion = i.position;
 
-if(posicion>=0 && posicion<=2){
-              int  id = getResources().getIdentifier(arrayList.get(i.position), "raw", getPackageName());
-    mp = MediaPlayer.create(PrincipalScreen.this, id);
-    mp.start();
-}else{
-    mp = MediaPlayer.create(PrincipalScreen.this, cancionesExternas[posicion-3]);
-    mp.start();
-}
+                if(posicion>=0 && posicion<=2){
+                    int  id = getResources().getIdentifier(arrayList.get(i.position), "raw", getPackageName());
+                    txtActual.setText(songs[posicion].getName());
+                    mp = MediaPlayer.create(PrincipalScreen.this, id);
+                    mp.start();
+                }else{
+                    mp = MediaPlayer.create(PrincipalScreen.this, cancionesExternas[posicion-3]);
+                    txtActual.setText(nombreCanciones[posicion-3].toString());
+                    mp.start();
+                }
 
+                try {
+                    //cambiando color del item seleccionado
+                    miAdapterView.getChildAt(itemActual).setBackgroundColor(Color.WHITE);
+
+                    if (posicion != -1 && posicion != itemActual){
+                        miAdapterView.getChildAt(posicion).setBackgroundColor(Color.LTGRAY);
+                    }
+
+                    itemActual = posicion;
+                } catch (Exception e){
+
+                }
+
+                actualizarTotal();
 
                 tvTime.setText(getHRM(mp.getDuration()));
                 skSong.setMax(mp.getDuration());
@@ -405,6 +469,9 @@ if(posicion>=0 && posicion<=2){
 
     }
 
+    public void actualizarTotal(){
+        this.txt1.setText((posicion+1) + "/" + (conExt+3));
+    }
 
 
 //A este metodo se devuelve el resultado obtenido
@@ -428,21 +495,16 @@ if(posicion>=0 && posicion<=2){
             list.setAdapter(a);
 
             try {
-
-               //    mp= MediaPlayer.create(PrincipalScreen.this, uri);
                    this.cancionesExternas[conExt] = uri;
+                   this.nombreCanciones[conExt] = nombreCancion;
                    conExt++;
-                  // mp.prepare();
-                   //mp.start();
-
+                   actualizarTotal();
                 Toast.makeText(PrincipalScreen.this,nombreCancion,LENGTH_LONG).show();
             }catch (Exception e){
                // Toast.makeText(PrincipalScreen.this,"error trycatch",LENGTH_LONG).show();
 
             }
-
-
-    }
+        }
     }
 
 
@@ -523,7 +585,6 @@ if(posicion>=0 && posicion<=2){
         return null;
     }
 
-
     public static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
@@ -532,12 +593,10 @@ if(posicion>=0 && posicion<=2){
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-
     public static String getNombre(String uri) {
         String fileName = uri.substring( uri.lastIndexOf('/')+1, uri.length() );
         String fileNameWithoutExtn = fileName.substring(0, fileName.lastIndexOf('.'));
         return fileNameWithoutExtn;
     }
-
 
 }
